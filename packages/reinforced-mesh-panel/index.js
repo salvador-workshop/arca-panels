@@ -83,7 +83,21 @@ const baseReinf = reinforcedMeshPanel.basePanelReinforcement({
     meshHoleDistance: inchesToMm(5 / 16),
 })[0]
 
-const reinfMeshPanel = null
+const reinfMeshPanel1 = reinforcedMeshPanel.reinforcedMeshPanel({
+    size: [inchesToMm(4), inchesToMm(4), inchesToMm(1 / 8)],
+    reinforcementThickness: [5, 4, 3],
+    meshEdgeMargin: inchesToMm(1 / 8),
+    meshHoleRadius: inchesToMm(1 / 8),
+    meshHoleDistance: inchesToMm(5 / 16),
+})[0]
+
+const reinfMeshPanel2 = reinforcedMeshPanel.reinforcedMeshPanel({
+    size: [inchesToMm(6), inchesToMm(3), inchesToMm(1 / 8)],
+    reinforcementThickness: [5, 4, 3],
+    meshEdgeMargin: inchesToMm(1 / 8),
+    meshHoleRadius: inchesToMm(1 / 8),
+    meshHoleDistance: inchesToMm(5 / 16),
+})[0]
 
 
 
@@ -99,9 +113,14 @@ const reinfMeshPanel = null
 function main() {
     const spaceUnit = inchesToMm(5)
 
+    // return [
+    //     translate([spaceUnit * 0, spaceUnit * 0, spaceUnit * 0], baseMesh),
+    //     translate([spaceUnit * 1, spaceUnit * 0, spaceUnit * 0], baseReinf),
+    // ]
+
     return [
-        translate([spaceUnit * 0, spaceUnit * 0, spaceUnit * 0], baseMesh),
-        translate([spaceUnit * 1, spaceUnit * 0, spaceUnit * 0], baseReinf),
+        translate([spaceUnit * 0, spaceUnit * 0, spaceUnit * 0], reinfMeshPanel1),
+        translate([spaceUnit * 0, spaceUnit * 1, spaceUnit * 0], reinfMeshPanel2),
     ]
 }
 

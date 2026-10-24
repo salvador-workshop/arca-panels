@@ -57,6 +57,7 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
 
     const {
         math,
+        position,
     } = swcadJs.calcs
 
     const {
@@ -335,7 +336,7 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
             holeDistance: meshHoleDistance,
         })
 
-        const mainModel = bMesh
+        const mainModel = position.ctr(bMesh)
         const modelParts = {
             mainModel,
         }
@@ -375,7 +376,7 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
             reinforcementThickness,
         })[0]
 
-        const mainModel = bReinf
+        const mainModel = position.ctr(bReinf)
         const modelParts = {
             mainModel,
         }
@@ -410,10 +411,15 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
             meshHoleDistance,
         } = modelProperties.dims
 
-        const baseMesh = null
-        const baseReinforcement = null
+        const baseMesh = baseMeshPanel(opts)[0]
+        const baseReinforcement = basePanelReinforcement(opts)[0]
+        
+        const panelAssembly = union(
+            position.ctrMin(baseMesh),
+            position.ctrMin(baseReinforcement),
+        )
 
-        const mainModel = cuboid()
+        const mainModel = position.ctr(panelAssembly)
         const modelParts = {
             mainModel,
         }
