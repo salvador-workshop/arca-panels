@@ -89,6 +89,7 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
                     math.inchesToMm(1),
                 ],
                 reinforcementThickness: [5, 4, 3],
+                meshThickness: standards.INTERFACE_THICKNESS,
                 meshEdgeMargin: math.inchesToMm(1 / 8),
                 meshHoleRadius: math.inchesToMm(1 / 8),
                 meshHoleDistance: math.inchesToMm(5 / 16),
@@ -116,6 +117,7 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
             size: defaultValues.dims.size,
             reinforcementPattern: defaultValues.constants.reinforcementPatterns[0],
             reinforcementThickness: defaultValues.dims.reinforcementThickness,
+            meshThickness: defaultValues.dims.meshThickness,
             meshEdgeMargin: defaultValues.dims.meshEdgeMargin,
             meshHoleRadius: defaultValues.dims.meshHoleRadius,
             meshHoleDistance: defaultValues.dims.meshHoleDistance,
@@ -148,6 +150,7 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
             size = defaults.opts.size,
             reinforcementPattern = defaults.opts.reinforcementPattern,
             reinforcementThickness = defaults.opts.reinforcementThickness,
+            meshThickness = defaults.opts.meshThickness,
             meshEdgeMargin = defaults.opts.meshEdgeMargin,
             meshHoleRadius = defaults.opts.meshHoleRadius,
             meshHoleDistance = defaults.opts.meshHoleDistance,
@@ -169,6 +172,7 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
             size,
             reinforcementPattern,
             reinforcementThickness,
+            meshThickness,
             meshEdgeMargin,
             meshHoleRadius,
             meshHoleDistance,
@@ -200,6 +204,7 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
             size,
             reinforcementPattern,
             reinforcementThickness,
+            meshThickness,
             meshEdgeMargin,
             meshHoleRadius,
             meshHoleDistance,
@@ -243,6 +248,7 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
             depth,
             height,
             reinforcementThickness,
+            meshThickness,
             meshEdgeMargin,
             meshHoleRadius,
             meshHoleDistance,
@@ -315,12 +321,21 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
             depth,
             height,
             reinforcementThickness,
+            meshThickness,
             meshEdgeMargin,
             meshHoleRadius,
             meshHoleDistance,
         } = modelProperties.dims
 
-        const mainModel = cuboid()
+        const bMesh = mesh.meshPanel({
+            size,
+            thickness: meshThickness,
+            edgeMargin: meshEdgeMargin,
+            holeRadius: meshHoleRadius,
+            holeDistance: meshHoleDistance,
+        })
+
+        const mainModel = bMesh
         const modelParts = {
             mainModel,
         }
@@ -355,7 +370,12 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
             meshHoleDistance,
         } = modelProperties.dims
 
-        const mainModel = cuboid()
+        const bReinf = reinforcedRectPanel({
+            size,
+            reinforcementThickness,
+        })[0]
+
+        const mainModel = bReinf
         const modelParts = {
             mainModel,
         }

@@ -67,10 +67,23 @@ const inchesToMm = (numIn) => numIn * 25.4
  * Test subjects
  * ------------------------------------- */
 
-const newModelOpts = {
-    size: [inchesToMm(3), inchesToMm(3), inchesToMm(1)],
-}
-const newModel = cuboid(newModelOpts)
+const baseMesh = reinforcedMeshPanel.baseMeshPanel({
+    size: [inchesToMm(4), inchesToMm(4), inchesToMm(1 / 8)],
+    reinforcementThickness: [5, 4, 3],
+    meshEdgeMargin: inchesToMm(1 / 8),
+    meshHoleRadius: inchesToMm(1 / 8),
+    meshHoleDistance: inchesToMm(5 / 16),
+})[0]
+
+const baseReinf = reinforcedMeshPanel.basePanelReinforcement({
+    size: [inchesToMm(4), inchesToMm(4), inchesToMm(1 / 8)],
+    reinforcementThickness: [5, 4, 3],
+    meshEdgeMargin: inchesToMm(1 / 8),
+    meshHoleRadius: inchesToMm(1 / 8),
+    meshHoleDistance: inchesToMm(5 / 16),
+})[0]
+
+const reinfMeshPanel = null
 
 
 
@@ -84,10 +97,11 @@ const newModel = cuboid(newModelOpts)
  * @returns `geom3` or `geom3[]`
  */
 function main() {
-    const spaceUnit = inchesToMm(3.5)
+    const spaceUnit = inchesToMm(5)
 
     return [
-        translate([spaceUnit * 0, spaceUnit * 0, spaceUnit * 0], newModel),
+        translate([spaceUnit * 0, spaceUnit * 0, spaceUnit * 0], baseMesh),
+        translate([spaceUnit * 1, spaceUnit * 0, spaceUnit * 0], baseReinf),
     ]
 }
 
