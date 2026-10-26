@@ -54,6 +54,11 @@ const { colorize } = jscad.colors
 
 const swcadJs = require('swcad-js').init({ jscad });
 
+const {
+    math,
+    position,
+} = swcadJs.calcs
+
 const dowelFramePanelModule = require('./src/index.js')
 const dowelFramePanel = dowelFramePanelModule.init({ jscad, swcadJs })
 
@@ -67,37 +72,12 @@ const inchesToMm = (numIn) => numIn * 25.4
  * Test subjects
  * ------------------------------------- */
 
-const baseMesh = dowelFramePanel.baseMeshPanel({
-    size: [inchesToMm(4), inchesToMm(4), inchesToMm(1 / 8)],
-    reinforcementThickness: [5, 4, 3],
-    meshEdgeMargin: inchesToMm(1 / 8),
-    meshHoleRadius: inchesToMm(1 / 8),
-    meshHoleDistance: inchesToMm(5 / 16),
-})[0]
+const dowelFramePanelOpts = {
+    dowelRadius: 3.25 / 2,
+    dowelCtrDistance: [math.inchesToMm(4), math.inchesToMm(8)],
+}
 
-const baseReinf = dowelFramePanel.basePanelReinforcement({
-    size: [inchesToMm(4), inchesToMm(4), inchesToMm(1 / 8)],
-    reinforcementThickness: [5, 4, 3],
-    meshEdgeMargin: inchesToMm(1 / 8),
-    meshHoleRadius: inchesToMm(1 / 8),
-    meshHoleDistance: inchesToMm(5 / 16),
-})[0]
-
-const reinfMeshPanel1 = dowelFramePanel.dowelFramePanel({
-    size: [inchesToMm(4), inchesToMm(4), inchesToMm(1 / 8)],
-    reinforcementThickness: [5, 4, 3],
-    meshEdgeMargin: inchesToMm(1 / 8),
-    meshHoleRadius: inchesToMm(1 / 8),
-    meshHoleDistance: inchesToMm(5 / 16),
-})[0]
-
-const reinfMeshPanel2 = dowelFramePanel.dowelFramePanel({
-    size: [inchesToMm(6), inchesToMm(3), inchesToMm(1 / 8)],
-    reinforcementThickness: [5, 4, 3],
-    meshEdgeMargin: inchesToMm(1 / 8),
-    meshHoleRadius: inchesToMm(1 / 8),
-    meshHoleDistance: inchesToMm(5 / 16),
-})[0]
+const dFramePanel = dowelFramePanel(dowelFramePanelOpts)[0]
 
 
 
@@ -113,15 +93,7 @@ const reinfMeshPanel2 = dowelFramePanel.dowelFramePanel({
 function main() {
     const spaceUnit = inchesToMm(5)
 
-    // return [
-    //     translate([spaceUnit * 0, spaceUnit * 0, spaceUnit * 0], baseMesh),
-    //     translate([spaceUnit * 1, spaceUnit * 0, spaceUnit * 0], baseReinf),
-    // ]
-
-    return [
-        translate([spaceUnit * 0, spaceUnit * 0, spaceUnit * 0], reinfMeshPanel1),
-        translate([spaceUnit * 0, spaceUnit * 1, spaceUnit * 0], reinfMeshPanel2),
-    ]
+    return dFramePanel
 }
 
 

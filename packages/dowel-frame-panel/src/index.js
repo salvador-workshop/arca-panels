@@ -10,18 +10,15 @@ const dowelFramePanelInit = ({ jscad, swcadJs }) => {
     } = jscad.primitives
 
     const {
-        align,
         translate,
     } = jscad.transforms
 
     const {
         intersect,
-        subtract,
         union,
-        scission
     } = jscad.booleans
 
-    const { hull, hullChain } = jscad.hulls
+    const { hull } = jscad.hulls
 
     const {
         standards,
@@ -281,7 +278,7 @@ const dowelFramePanelInit = ({ jscad, swcadJs }) => {
 
         /** Components used by model */
         const modelComponents = {
-            interfaceProfileBeads: beadsBits.profileBeads(
+            interfaceProfileBeads: beadsBits.interface30DegProfileBeads(
                 interfaceThickness,
                 standards.SM_PROFILE_BEAD_WIDTH,
                 standards.MD_PROFILE_BEAD_WIDTH,
