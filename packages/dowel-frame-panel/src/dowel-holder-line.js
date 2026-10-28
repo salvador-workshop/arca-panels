@@ -325,7 +325,7 @@ const dowelHolderLineInit = ({ jscad, swcadJs }) => {
                 length: modelProps.dims.dowelHolderLength
             }
 
-            let dHolder = fittings.roundFitting(dHolderOpts)[0]
+            let dHolder = fittings.doubleRoundFitting(dHolderOpts)[0]
             dHolder = rotate([0, 0, TAU / 4], dHolder)
 
             return dHolder

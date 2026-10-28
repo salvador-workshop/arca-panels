@@ -31,6 +31,7 @@ const dowelFramePanelInit = ({ jscad, swcadJs }) => {
 
     const {
         shapes,
+        reinforcements,
     } = swcadJs.profiles
 
     const {
@@ -220,7 +221,7 @@ const dowelFramePanelInit = ({ jscad, swcadJs }) => {
             dCtrDistance[0],
             dCtrDistance[1],
         ]
-        const reinfRectData = shapes.rectangle.reinforcedRect({
+        const reinfRectData = reinforcements.reinforcedRect({
             size: centreLineSize,
             reinforcementPattern,
         })[2]
