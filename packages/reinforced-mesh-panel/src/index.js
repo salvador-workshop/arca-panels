@@ -62,7 +62,7 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
 
     const {
         mesh,
-        reinforcedRectPanel,
+        reinforcements,
     } = swcadJs.components
 
 
@@ -144,7 +144,6 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
      */
     const reinforcedMeshPanelOpts = (opts) => {
         const defaults = reinforcedMeshPanelDefaults()
-        console.log('reinforcedMeshPanelOpts() -- opts', opts)
 
         // User options
         const {
@@ -181,7 +180,6 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
             ...stdOpts,
         }
 
-        console.log('reinforcedMeshPanelOpts() -- initOpts', initOpts)
 
         return initOpts
     }
@@ -199,7 +197,6 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
      */
     const reinforcedMeshPanelProps = (opts) => {
         const defaults = reinforcedMeshPanelDefaults()
-        console.log('reinforcedMeshPanelProps() -- opts', opts)
 
         const {
             size,
@@ -288,7 +285,6 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
             components: modelComponents,
         }
 
-        console.log('reinforcedMeshPanelProps() -- modelProperties', modelProperties)
 
         return modelProperties
     }
@@ -371,7 +367,7 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
             meshHoleDistance,
         } = modelProperties.dims
 
-        const bReinf = reinforcedRectPanel({
+        const bReinf = reinforcements.reinforcedRectPanel({
             size,
             reinforcementThickness,
         })[0]
@@ -413,7 +409,7 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
 
         const baseMesh = baseMeshPanel(opts)[0]
         const baseReinforcement = basePanelReinforcement(opts)[0]
-        
+
         const panelAssembly = union(
             position.ctrMin(baseMesh),
             position.ctrMin(baseReinforcement),
@@ -427,52 +423,12 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
         return [mainModel, modelParts, modelProperties]
     }
 
-    /**
-     * Dowel-Reinforced Mesh Panel
-     * @param {*} opts 
-     * @returns Array with model, parts, and properties: [`geom3`, `Object.<string, geom3>`, `Object.<string, any>`]
-     * @memberof newModelParent
-     */
-    const dowelReinforcedMeshPanel = (opts) => {
-        const defaults = reinforcedMeshPanelDefaults()
-        const initOpts = reinforcedMeshPanelOpts(opts)
-        const modelProperties = reinforcedMeshPanelProps(initOpts)
-
-        const {
-            reinforcementPattern,
-            meshHolePattern,
-        } = modelProperties.opts
-
-        const {
-            size,
-            width,
-            depth,
-            height,
-            reinforcementThickness,
-            meshEdgeMargin,
-            meshHoleRadius,
-            meshHoleDistance,
-        } = modelProperties.dims
-
-        const baseMesh = null
-        const baseReinforcement = null
-        const dowelsCutaway = null
-
-        const mainModel = cuboid()
-        const modelParts = {
-            mainModel,
-        }
-
-        return [mainModel, modelParts, modelProperties]
-    }
-
     return {
         defaults: reinforcedMeshPanelDefaults,
         props: reinforcedMeshPanelProps,
         baseMeshPanel,
         basePanelReinforcement,
         reinforcedMeshPanel,
-        dowelReinforcedMeshPanel,
     }
 }
 
