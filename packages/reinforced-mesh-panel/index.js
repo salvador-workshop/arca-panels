@@ -89,6 +89,7 @@ const reinfMeshPanel1 = reinforcedMeshPanel.reinforcedMeshPanel({
     meshEdgeMargin: inchesToMm(1 / 8),
     meshHoleRadius: inchesToMm(1 / 8),
     meshHoleDistance: inchesToMm(5 / 16),
+    reinforcementPattern: 'cross',
 })[0]
 
 const reinfMeshPanel2 = reinforcedMeshPanel.reinforcedMeshPanel({
@@ -97,6 +98,7 @@ const reinfMeshPanel2 = reinforcedMeshPanel.reinforcedMeshPanel({
     meshEdgeMargin: inchesToMm(1 / 8),
     meshHoleRadius: inchesToMm(1 / 8),
     meshHoleDistance: inchesToMm(5 / 16),
+    meshHolePattern: 'square',
 })[0]
 
 

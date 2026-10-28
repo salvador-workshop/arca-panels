@@ -68,31 +68,39 @@ const inchesToMm = (numIn) => numIn * 25.4
  * ------------------------------------- */
 
 const baseMesh = dowelReinforcedMeshPanel.baseMeshPanel({
-    size: [inchesToMm(4), inchesToMm(4), inchesToMm(1 / 8)],
+    size: [inchesToMm(4), inchesToMm(4)],
     meshEdgeMargin: inchesToMm(1 / 8),
     meshHoleRadius: inchesToMm(1 / 8),
     meshHoleDistance: inchesToMm(5 / 16),
 })[0]
 
 const baseReinf = dowelReinforcedMeshPanel.basePanelReinforcement({
-    size: [inchesToMm(4), inchesToMm(4), inchesToMm(1 / 8)],
+    size: [inchesToMm(4), inchesToMm(4)],
+    meshEdgeMargin: inchesToMm(1 / 8),
+    meshHoleRadius: inchesToMm(1 / 8),
+    meshHoleDistance: inchesToMm(5 / 16),
+})[0]
+
+const panelDowelHolders = dowelReinforcedMeshPanel.panelDowelHolders({
+    size: [inchesToMm(6), inchesToMm(3)],
     meshEdgeMargin: inchesToMm(1 / 8),
     meshHoleRadius: inchesToMm(1 / 8),
     meshHoleDistance: inchesToMm(5 / 16),
 })[0]
 
 const reinfMeshPanel1 = dowelReinforcedMeshPanel.dowelReinforcedMeshPanel({
-    size: [inchesToMm(4), inchesToMm(4), inchesToMm(1 / 8)],
+    size: [inchesToMm(4), inchesToMm(4)],
     meshEdgeMargin: inchesToMm(1 / 8),
     meshHoleRadius: inchesToMm(1 / 8),
     meshHoleDistance: inchesToMm(5 / 16),
 })[0]
 
 const reinfMeshPanel2 = dowelReinforcedMeshPanel.dowelReinforcedMeshPanel({
-    size: [inchesToMm(6), inchesToMm(3), inchesToMm(1 / 8)],
+    size: [inchesToMm(6), inchesToMm(3)],
     meshEdgeMargin: inchesToMm(1 / 8),
     meshHoleRadius: inchesToMm(1 / 8),
     meshHoleDistance: inchesToMm(5 / 16),
+    meshHolePattern: 'square',
 })[0]
 
 
@@ -118,6 +126,8 @@ function main() {
         translate([spaceUnit * 0, spaceUnit * 0, spaceUnit * 0], reinfMeshPanel1),
         translate([spaceUnit * 0, spaceUnit * 1, spaceUnit * 0], reinfMeshPanel2),
     ]
+
+    // return panelDowelHolders
 }
 
 

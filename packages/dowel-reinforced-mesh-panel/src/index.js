@@ -1,55 +1,16 @@
 "use strict"
 
 const dowelReinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
-    const {
-        cube,
-        cylinder,
-        sphere,
-        cylinderElliptic,
-        circle,
-        cuboid,
-        roundedCuboid,
-        roundedCylinder,
-        roundedRectangle,
-        rectangle,
-        triangle,
-    } = jscad.primitives
 
     const {
-        align,
-        translate,
         rotate,
-        mirror
     } = jscad.transforms
 
     const {
-        intersect,
-        subtract,
         union,
-        scission
     } = jscad.booleans
 
-    const {
-        extrudeLinear,
-        extrudeRotate,
-        project
-    } = jscad.extrusions
-
-    const {
-        measureDimensions,
-        measureBoundingBox,
-        measureVolume
-    } = jscad.measurements
-
-    const {
-        hull,
-        hullChain
-    } = jscad.hulls
-
-    const { vectorText } = jscad.text
-    const { toOutlines } = jscad.geometries.geom2
     const { TAU } = jscad.maths.constants
-    const { colorize } = jscad.colors
 
     const {
         standards,
@@ -61,8 +22,14 @@ const dowelReinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
     } = swcadJs.calcs
 
     const {
+        reinforcements: reinforcements2d,
+    } = swcadJs.profiles
+
+    const {
         mesh,
         reinforcements,
+        fittings,
+        componentLine,
     } = swcadJs.components
 
 
@@ -87,9 +54,10 @@ const dowelReinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
                 size: [
                     math.inchesToMm(2),
                     math.inchesToMm(4),
-                    math.inchesToMm(1),
                 ],
                 dowelRadius: 3.5 / 2,
+                dowelHolderLength: math.inchesToMm(1 / 4),
+                dowelHolderUnitLength: math.inchesToMm(7 / 8),
                 meshThickness: standards.INTERFACE_THICKNESS,
                 meshEdgeMargin: math.inchesToMm(1 / 8),
                 meshHoleRadius: math.inchesToMm(1 / 8),
@@ -117,6 +85,8 @@ const dowelReinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
             ...standardOpts,
             size: defaultValues.dims.size,
             dowelRadius: defaultValues.dims.dowelRadius,
+            dowelHolderLength: defaultValues.dims.dowelHolderLength,
+            dowelHolderUnitLength: defaultValues.dims.dowelHolderUnitLength,
             reinforcementPattern: defaultValues.constants.reinforcementPatterns[0],
             meshThickness: defaultValues.dims.meshThickness,
             meshEdgeMargin: defaultValues.dims.meshEdgeMargin,
@@ -149,7 +119,8 @@ const dowelReinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
         const {
             size = defaults.opts.size,
             dowelRadius = defaults.opts.dowelRadius,
-            reinforcementPattern = defaults.opts.reinforcementPattern,
+            dowelHolderLength = defaults.opts.dowelHolderLength,
+            dowelHolderUnitLength = defaults.opts.dowelHolderUnitLength,
             meshThickness = defaults.opts.meshThickness,
             meshEdgeMargin = defaults.opts.meshEdgeMargin,
             meshHoleRadius = defaults.opts.meshHoleRadius,
@@ -171,7 +142,8 @@ const dowelReinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
         const initOpts = {
             size,
             dowelRadius,
-            reinforcementPattern,
+            dowelHolderLength,
+            dowelHolderUnitLength,
             meshThickness,
             meshEdgeMargin,
             meshHoleRadius,
@@ -201,7 +173,8 @@ const dowelReinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
         const {
             size,
             dowelRadius,
-            reinforcementPattern,
+            dowelHolderLength,
+            dowelHolderUnitLength,
             meshThickness,
             meshEdgeMargin,
             meshHoleRadius,
@@ -219,7 +192,6 @@ const dowelReinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
 
         const width = size[0]
         const depth = size[1]
-        const height = size[2]
         const dowelDiam = dowelRadius * 2
 
         const dowelHolderWidth = dowelDiam + (interfaceThickness * 2)
@@ -227,6 +199,12 @@ const dowelReinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
             dowelHolderWidth,
             dowelHolderWidth,
             dowelHolderWidth
+        ]
+
+        const panelSize = [
+            width,
+            depth,
+            interfaceThickness
         ]
 
         /* ----------------------------------------
@@ -242,7 +220,7 @@ const dowelReinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
         /** Derived user options for the model */
         const modelOpts = {
             type,
-            reinforcementPattern,
+            reinforcementPattern: defaults.opts.reinforcementPattern,
             meshHolePattern,
             scale,
         }
@@ -252,9 +230,11 @@ const dowelReinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
             size,
             width,
             depth,
-            height,
+            panelSize,
             dowelDiam,
             dowelRadius,
+            dowelHolderLength,
+            dowelHolderUnitLength,
             dowelHolderWidth,
             reinforcementThickness,
             meshThickness,
@@ -319,16 +299,11 @@ const dowelReinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
         const modelProperties = dowelReinforcedMeshPanelProps(initOpts)
 
         const {
-            reinforcementPattern,
             meshHolePattern,
         } = modelProperties.opts
 
         const {
             size,
-            width,
-            depth,
-            height,
-            reinforcementThickness,
             meshThickness,
             meshEdgeMargin,
             meshHoleRadius,
@@ -341,6 +316,7 @@ const dowelReinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
             edgeMargin: meshEdgeMargin,
             holeRadius: meshHoleRadius,
             holeDistance: meshHoleDistance,
+            holePattern: meshHolePattern,
         })
 
         const mainModel = position.ctr(bMesh)
@@ -364,26 +340,90 @@ const dowelReinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
 
         const {
             reinforcementPattern,
-            meshHolePattern,
         } = modelProperties.opts
 
         const {
-            size,
-            width,
-            depth,
-            height,
+            panelSize,
             reinforcementThickness,
-            meshEdgeMargin,
-            meshHoleRadius,
-            meshHoleDistance,
         } = modelProperties.dims
 
         const bReinf = reinforcements.reinforcedRectPanel({
-            size,
+            size: panelSize,
+            reinforcementPattern,
             reinforcementThickness,
         })[0]
 
         const mainModel = position.ctr(bReinf)
+        const modelParts = {
+            mainModel,
+        }
+
+        return [mainModel, modelParts, modelProperties]
+    }
+
+    /**
+     * Base panel reinforcement
+     * @param {*} opts 
+     * @returns Array with model, parts, and properties: [`geom3`, `Object.<string, geom3>`, `Object.<string, any>`]
+     * @memberof newModelParent
+     */
+    const panelDowelHolders = (opts) => {
+        const defaults = dowelReinforcedMeshPanelDefaults()
+        const initOpts = dowelReinforcedMeshPanelOpts(opts)
+        const modelProperties = dowelReinforcedMeshPanelProps(initOpts)
+
+        const {
+            dowelRadius,
+            dowelHolderLength,
+            dowelHolderUnitLength,
+            panelSize,
+            reinforcementThickness,
+        } = modelProperties.dims
+
+        const bReinfData = reinforcements2d.reinforcedRect({
+            size: panelSize,
+            reinforcementThickness,
+        })[2]
+
+        const edgeLines = bReinfData.points.outline
+        const diagLines = bReinfData.points.lines
+
+        const baseDowelHolder = rotate(
+            [0, 0, TAU / 4],
+            fittings.roundFitting({
+                dowelRadius,
+                length: dowelHolderLength,
+            })[0]
+        )
+
+        const compLineOpts = {
+            baseLineOffset: 0,
+            component: baseDowelHolder,
+            unitLength: dowelHolderUnitLength,
+        }
+        const edgeHolderLines = edgeLines.map(eLine => {
+            return componentLine({
+                ...compLineOpts,
+                startPt: eLine[0],
+                endPt: eLine[1],
+                endOffset: dowelHolderLength * 1.5,
+            })[0]
+        })
+        const diagHolderLines = diagLines.map(dLine => {
+            return componentLine({
+                ...compLineOpts,
+                startPt: dLine[0],
+                endPt: dLine[1],
+                endOffset: dowelHolderLength * 1.75,
+            })[0]
+        })
+
+        const holderLines = [
+            ...edgeHolderLines,
+            ...diagHolderLines,
+        ]
+
+        const mainModel = union(...holderLines)
         const modelParts = {
             mainModel,
         }
@@ -402,28 +442,14 @@ const dowelReinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
         const initOpts = dowelReinforcedMeshPanelOpts(opts)
         const modelProperties = dowelReinforcedMeshPanelProps(initOpts)
 
-        const {
-            reinforcementPattern,
-            meshHolePattern,
-        } = modelProperties.opts
-
-        const {
-            size,
-            width,
-            depth,
-            height,
-            reinforcementThickness,
-            meshEdgeMargin,
-            meshHoleRadius,
-            meshHoleDistance,
-        } = modelProperties.dims
-
         const baseMesh = baseMeshPanel(opts)[0]
         const baseReinforcement = basePanelReinforcement(opts)[0]
+        const dowelHolders = panelDowelHolders(opts)[0]
 
         const panelAssembly = union(
             position.ctrMin(baseMesh),
             position.ctrMin(baseReinforcement),
+            position.ctrMin(dowelHolders),
         )
 
         const mainModel = position.ctr(panelAssembly)
@@ -439,6 +465,7 @@ const dowelReinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
         props: dowelReinforcedMeshPanelProps,
         baseMeshPanel,
         basePanelReinforcement,
+        panelDowelHolders,
         dowelReinforcedMeshPanel,
     }
 }

@@ -2,54 +2,8 @@
 
 const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
     const {
-        cube,
-        cylinder,
-        sphere,
-        cylinderElliptic,
-        circle,
-        cuboid,
-        roundedCuboid,
-        roundedCylinder,
-        roundedRectangle,
-        rectangle,
-        triangle,
-    } = jscad.primitives
-
-    const {
-        align,
-        translate,
-        rotate,
-        mirror
-    } = jscad.transforms
-
-    const {
-        intersect,
-        subtract,
         union,
-        scission
     } = jscad.booleans
-
-    const {
-        extrudeLinear,
-        extrudeRotate,
-        project
-    } = jscad.extrusions
-
-    const {
-        measureDimensions,
-        measureBoundingBox,
-        measureVolume
-    } = jscad.measurements
-
-    const {
-        hull,
-        hullChain
-    } = jscad.hulls
-
-    const { vectorText } = jscad.text
-    const { toOutlines } = jscad.geometries.geom2
-    const { TAU } = jscad.maths.constants
-    const { colorize } = jscad.colors
 
     const {
         standards,
@@ -308,16 +262,11 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
         const modelProperties = reinforcedMeshPanelProps(initOpts)
 
         const {
-            reinforcementPattern,
             meshHolePattern,
         } = modelProperties.opts
 
         const {
             size,
-            width,
-            depth,
-            height,
-            reinforcementThickness,
             meshThickness,
             meshEdgeMargin,
             meshHoleRadius,
@@ -330,6 +279,7 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
             edgeMargin: meshEdgeMargin,
             holeRadius: meshHoleRadius,
             holeDistance: meshHoleDistance,
+            holePattern: meshHolePattern,
         })
 
         const mainModel = position.ctr(bMesh)
@@ -353,22 +303,16 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
 
         const {
             reinforcementPattern,
-            meshHolePattern,
         } = modelProperties.opts
 
         const {
             size,
-            width,
-            depth,
-            height,
             reinforcementThickness,
-            meshEdgeMargin,
-            meshHoleRadius,
-            meshHoleDistance,
         } = modelProperties.dims
 
         const bReinf = reinforcements.reinforcedRectPanel({
             size,
+            reinforcementPattern,
             reinforcementThickness,
         })[0]
 
@@ -390,22 +334,6 @@ const reinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
         const defaults = reinforcedMeshPanelDefaults()
         const initOpts = reinforcedMeshPanelOpts(opts)
         const modelProperties = reinforcedMeshPanelProps(initOpts)
-
-        const {
-            reinforcementPattern,
-            meshHolePattern,
-        } = modelProperties.opts
-
-        const {
-            size,
-            width,
-            depth,
-            height,
-            reinforcementThickness,
-            meshEdgeMargin,
-            meshHoleRadius,
-            meshHoleDistance,
-        } = modelProperties.dims
 
         const baseMesh = baseMeshPanel(opts)[0]
         const baseReinforcement = basePanelReinforcement(opts)[0]
