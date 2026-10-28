@@ -75,6 +75,7 @@ const inchesToMm = (numIn) => numIn * 25.4
 const dowelFramePanelOpts = {
     dowelRadius: 3.25 / 2,
     dowelCtrDistance: [math.inchesToMm(4), math.inchesToMm(8)],
+    dowelHolderType: 'double'
 }
 
 const dFramePanel = dowelFramePanel(dowelFramePanelOpts)[0]

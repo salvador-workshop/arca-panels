@@ -1,6 +1,6 @@
 {
   "name": "arca-panels",
-  "version": "0.2.0-alpha.0",
+  "version": "0.2.0-alpha.1",
   "description": "SW's Code-CAD tools for generating models of simple flat panels, some built with standardized components. Also handles fittings and accessories for those panels.",
   "workspaces": [
     "packages/*"
