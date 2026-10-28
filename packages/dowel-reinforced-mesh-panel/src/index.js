@@ -27,7 +27,6 @@ const dowelReinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
 
     const {
         mesh,
-        reinforcements,
         fittings,
         componentLine,
     } = swcadJs.components
@@ -328,41 +327,7 @@ const dowelReinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
     }
 
     /**
-     * Base panel reinforcement
-     * @param {*} opts 
-     * @returns Array with model, parts, and properties: [`geom3`, `Object.<string, geom3>`, `Object.<string, any>`]
-     * @memberof newModelParent
-     */
-    const basePanelReinforcement = (opts) => {
-        const defaults = dowelReinforcedMeshPanelDefaults()
-        const initOpts = dowelReinforcedMeshPanelOpts(opts)
-        const modelProperties = dowelReinforcedMeshPanelProps(initOpts)
-
-        const {
-            reinforcementPattern,
-        } = modelProperties.opts
-
-        const {
-            panelSize,
-            reinforcementThickness,
-        } = modelProperties.dims
-
-        const bReinf = reinforcements.reinforcedRectPanel({
-            size: panelSize,
-            reinforcementPattern,
-            reinforcementThickness,
-        })[0]
-
-        const mainModel = position.ctr(bReinf)
-        const modelParts = {
-            mainModel,
-        }
-
-        return [mainModel, modelParts, modelProperties]
-    }
-
-    /**
-     * Base panel reinforcement
+     * Reinforcing dowel holders
      * @param {*} opts 
      * @returns Array with model, parts, and properties: [`geom3`, `Object.<string, geom3>`, `Object.<string, any>`]
      * @memberof newModelParent
@@ -443,12 +408,10 @@ const dowelReinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
         const modelProperties = dowelReinforcedMeshPanelProps(initOpts)
 
         const baseMesh = baseMeshPanel(opts)[0]
-        const baseReinforcement = basePanelReinforcement(opts)[0]
         const dowelHolders = panelDowelHolders(opts)[0]
 
         const panelAssembly = union(
             position.ctrMin(baseMesh),
-            position.ctrMin(baseReinforcement),
             position.ctrMin(dowelHolders),
         )
 
@@ -464,7 +427,6 @@ const dowelReinforcedMeshPanelInit = ({ jscad, swcadJs }) => {
         defaults: dowelReinforcedMeshPanelDefaults,
         props: dowelReinforcedMeshPanelProps,
         baseMeshPanel,
-        basePanelReinforcement,
         panelDowelHolders,
         dowelReinforcedMeshPanel,
     }
