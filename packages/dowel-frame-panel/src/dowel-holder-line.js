@@ -64,10 +64,14 @@ const dowelHolderLineInit = ({ jscad, swcadJs }) => {
 
         /** Specific value declarations */
         const defaultValues = {
+            constants: {
+                dowelHolderTypes: ['single', 'inverse', 'double']
+            },
             opts: {
+                dowelHolderType: 'double',
+                flip: false,
                 type: standards.types.TYPE_DEFAULT,
                 scale: 1,
-                flip: false,
             },
             dims: {
                 dowelDiam: 3.25,
@@ -108,6 +112,7 @@ const dowelHolderLineInit = ({ jscad, swcadJs }) => {
             unitLength: defaultValues.dims.unitLength,
             endOffset: defaultValues.dims.endOffset,
             baseLineOffset: defaultValues.dims.dowelRadius,
+            dowelHolderType: defaultValues.opts.dowelHolderType,
             flip: defaultValues.opts.flip,
         }
 
@@ -121,7 +126,6 @@ const dowelHolderLineInit = ({ jscad, swcadJs }) => {
 
     const dowelHolderLineOpts = (opts) => {
         const defaults = dowelHolderLineDefaults()
-        console.log('dowelHolderLineOpts() -- opts', opts)
 
         // User options
         const {
@@ -132,6 +136,7 @@ const dowelHolderLineInit = ({ jscad, swcadJs }) => {
             unitLength = defaults.opts.unitLength,
             endOffset = defaults.opts.endOffset,
             baseLineOffset = defaults.opts.baseLineOffset,
+            dowelHolderType = defaults.opts.dowelHolderType,
             flip = defaults.opts.flip,
             type = defaults.opts.type,
             scale = defaults.opts.scale,
@@ -154,11 +159,11 @@ const dowelHolderLineInit = ({ jscad, swcadJs }) => {
             unitLength,
             endOffset,
             baseLineOffset,
+            dowelHolderType,
             flip,
             ...stdOpts,
         }
 
-        console.log('dowelHolderLineOpts() -- initOpts', initOpts)
 
         return initOpts
     }
@@ -175,6 +180,7 @@ const dowelHolderLineInit = ({ jscad, swcadJs }) => {
             unitLength,
             endOffset,
             baseLineOffset,
+            dowelHolderType,
             flip,
             type,
             scale,
@@ -212,6 +218,7 @@ const dowelHolderLineInit = ({ jscad, swcadJs }) => {
             type,
             scale,
             types,
+            dowelHolderType,
             flip,
         }
         /** Various dimensions for model */
@@ -260,7 +267,6 @@ const dowelHolderLineInit = ({ jscad, swcadJs }) => {
             points: modelPoints,
         }
 
-        console.log('dowel-holder-line -- modelProperties', modelProperties)
 
         return modelProperties
     }
@@ -275,43 +281,8 @@ const dowelHolderLineInit = ({ jscad, swcadJs }) => {
      */
     const dowelHolderLine = (opts) => {
         const defaults = dowelHolderLineDefaults()
-
-
-
-        // User options
-        const {
-            size = defaults.opts.size,
-            interfaceThickness = defaults.opts.interfaceThickness,
-            fitGap = defaults.opts.fitGap,
-            type = defaults.opts.type,
-            flip = defaults.opts.flip,
-            scale = defaults.opts.scale,
-            dowelRadius = defaults.opts.dowelRadius,
-            dowelHolderLength = defaults.opts.dowelHolderLength,
-            unitLength = defaults.opts.unitLength,
-            startPt = defaults.opts.startPt,
-            endPt = defaults.opts.endPt,
-            endOffset = defaults.opts.endOffset,
-            baseLineOffset = defaults.opts.baseLineOffset,
-        } = opts
-
-        const inOpts = {
-            size,
-            interfaceThickness,
-            fitGap,
-            type,
-            flip,
-            scale,
-            dowelRadius,
-            dowelHolderLength,
-            unitLength,
-            startPt,
-            endPt,
-            endOffset,
-            baseLineOffset,
-        }
-
-        const modelProperties = dowelHolderLineProps(inOpts)
+        const initOpts = dowelHolderLineOpts(opts)
+        const modelProperties = dowelHolderLineProps(initOpts)
 
 
         /* ----------------------------------------
@@ -320,12 +291,31 @@ const dowelHolderLineInit = ({ jscad, swcadJs }) => {
 
         /** Sub-component 01 */
         const dowelComponent = (modelProps) => {
+            const {
+                dowelHolderType,
+            } = modelProps.opts
+
+            const {
+                dowelRadius,
+                dowelHolderLength,
+            } = modelProps.dims
+
             const dHolderOpts = {
-                dowelRadius: modelProps.dims.dowelRadius,
-                length: modelProps.dims.dowelHolderLength
+                dowelRadius,
+                length: dowelHolderLength
             }
 
-            let dHolder = fittings.roundFitting(dHolderOpts)[0]
+            let dHolder = null
+
+            if (dowelHolderType == 'single') {
+                dHolder = fittings.roundFitting(dHolderOpts)[0]
+            } else if (dowelHolderType == 'inverse') {
+                dHolder = fittings.inverseRoundFitting(dHolderOpts)[0]
+            } else {
+                // defaults to 'double
+                dHolder = fittings.doubleRoundFitting(dHolderOpts)[0]
+            }
+
             dHolder = rotate([0, 0, TAU / 4], dHolder)
 
             return dHolder

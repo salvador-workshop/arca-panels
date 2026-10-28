@@ -1,6 +1,6 @@
 "use strict"
 
-const dowelHolderLineModule = require('./dowel-holder-line.js')
+const dowelHolderLineModule = require('.dowel-holder-line.js')
 
 const dowelFramePanelInit = ({ jscad, swcadJs }) => {
 
@@ -31,6 +31,7 @@ const dowelFramePanelInit = ({ jscad, swcadJs }) => {
 
     const {
         shapes,
+        reinforcements,
     } = swcadJs.profiles
 
     const {
@@ -68,9 +69,11 @@ const dowelFramePanelInit = ({ jscad, swcadJs }) => {
 
         const defaultValues = {
             constants: {
+                dowelHolderTypes: ['single', 'inverse', 'double']
             },
             opts: {
                 type: standards.types.TYPE_DEFAULT,
+                dowelHolderType: 'double',
                 scale: 1,
                 reinforcementLevel: 1,
                 reinforcementPattern: 'default',
@@ -106,6 +109,7 @@ const dowelFramePanelInit = ({ jscad, swcadJs }) => {
             dowelHolderLength: defaultValues.dims.dowelHolderLength,
             reinforcementLevel: defaultValues.opts.reinforcementLevel,
             reinforcementPattern: defaultValues.opts.reinforcementPattern,
+            dowelHolderType: defaultValues.opts.dowelHolderType,
             endOffset: defaultValues.dims.endOffset,
         }
 
@@ -126,7 +130,6 @@ const dowelFramePanelInit = ({ jscad, swcadJs }) => {
      */
     const dowelFramePanelOpts = (opts) => {
         const defaults = dowelFramePanelDefaults()
-        console.log('dowelFramePanelOpts() -- opts', opts)
 
         // User options
         const {
@@ -136,6 +139,7 @@ const dowelFramePanelInit = ({ jscad, swcadJs }) => {
             dowelHolderLength = defaults.opts.dowelHolderLength,
             reinforcementLevel = defaults.opts.reinforcementLevel,
             reinforcementPattern = defaults.opts.reinforcementPattern,
+            dowelHolderType = defaults.opts.dowelHolderType,
             endOffset = defaults.opts.endOffset,
             type = defaults.opts.type,
             scale = defaults.opts.scale,
@@ -157,11 +161,11 @@ const dowelFramePanelInit = ({ jscad, swcadJs }) => {
             dowelHolderLength,
             reinforcementLevel,
             reinforcementPattern,
+            dowelHolderType,
             endOffset,
             ...stdOpts,
         }
 
-        console.log('dowelFramePanelOpts() -- initOpts', initOpts)
 
         return initOpts
     }
@@ -176,7 +180,6 @@ const dowelFramePanelInit = ({ jscad, swcadJs }) => {
      */
     const dowelFramePanelProps = (opts) => {
         const defaults = dowelFramePanelDefaults()
-        console.log('dowelFramePanelProps() -- opts', opts)
 
         const {
             dowelRadius,
@@ -185,6 +188,7 @@ const dowelFramePanelInit = ({ jscad, swcadJs }) => {
             dowelHolderLength,
             reinforcementLevel,
             reinforcementPattern,
+            dowelHolderType,
             endOffset,
             type,
             scale,
@@ -220,11 +224,10 @@ const dowelFramePanelInit = ({ jscad, swcadJs }) => {
             dCtrDistance[0],
             dCtrDistance[1],
         ]
-        const reinfRectData = shapes.rectangle.reinforcedRect({
+        const reinfRectData = reinforcements.reinforcedRect({
             size: centreLineSize,
             reinforcementPattern,
         })[2]
-        console.log('reinfRectData', reinfRectData)
 
         const panelFramePoints = {
             centre: reinfRectData.points.centre,
@@ -249,6 +252,7 @@ const dowelFramePanelInit = ({ jscad, swcadJs }) => {
             scale,
             reinforcementLevel,
             reinforcementPattern,
+            dowelHolderType,
         }
 
         const modelConstants = {
@@ -302,7 +306,6 @@ const dowelFramePanelInit = ({ jscad, swcadJs }) => {
             components: modelComponents
         }
 
-        console.log('dowelFramePanelProps() -- modelProperties', modelProperties)
 
         return modelProperties
     }
@@ -357,18 +360,20 @@ const dowelFramePanelInit = ({ jscad, swcadJs }) => {
 
         const holderLine = (modelProps, line) => {
             const {
+                dowelHolderType,
+            } = modelProps.opts
+
+            const {
                 endOffset,
                 unitLength,
                 dowelRadius,
                 dowelHolderLength,
             } = modelProps.dims
-            console.log('holderLine() modelProps, line', modelProps, line)
 
             const startPt = line[0]
             const endPt = line[1]
 
             const lineLength = distBetweenPoints(startPt, endPt)
-            console.log('holderLine() lineLength', lineLength)
 
             let uLength = unitLength
             let dHolderLength = dowelHolderLength
@@ -386,15 +391,17 @@ const dowelFramePanelInit = ({ jscad, swcadJs }) => {
             const hLineProps = {
                 startPt,
                 endPt,
+                dowelHolderType,
                 dowelRadius,
                 dowelHolderLength: dHolderLength,
                 unitLength: uLength,
                 endOffset: eOffset,
                 flip: true,
             }
-            console.log('holderLine() hLineProps', hLineProps)
-            const hLineOuts = dowelHolderLine(hLineProps)
-            return hLineOuts[0]
+
+            const hLineOuts = dowelHolderLine(hLineProps)[0]
+
+            return hLineOuts
         }
 
 
